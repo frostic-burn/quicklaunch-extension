@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "QuickLaunch Sessions",
+  "version": "1.0.0",
+  "description": "Save and manage browser tab sessions for quick access later",
+  
+  "permissions": [
+    "tabs",
+    "storage"
+  ],
+  
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "QuickLaunch Sessions",
+    "default_icon": {
+      "16": "icons/icon16.jpg",
+      "48": "icons/icon48.jpg",
+      "128": "icons/icon128.jpg"
+    }
+  },
+  
+  "icons": {
+    "16": "icons/icon16.jpg",
+    "48": "icons/icon48.jpg",
+    "128": "icons/icon128.jpg"
+  },
+  
+  "host_permissions": [
+    "<all_urls>"
+  ]
+}
