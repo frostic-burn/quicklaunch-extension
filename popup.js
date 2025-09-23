@@ -1,11 +1,9 @@
-// QuickLaunch Sessions Extension - Popup JavaScript
-
 class QuickLaunchSessions {
   constructor() {
     this.sessions = [];
     this.draggedElement = null;
     this.draggedIndex = null;
-    this.expandedSessions = new Set(); // Track which sessions are expanded
+    this.expandedSessions = new Set(); 
     this.init();
   }
 
@@ -15,7 +13,6 @@ class QuickLaunchSessions {
     this.renderSessions();
   }
 
-  // Storage Management
   async loadSessions() {
     try {
       const result = await chrome.storage.local.get(['sessions']);
@@ -34,14 +31,11 @@ class QuickLaunchSessions {
     }
   }
 
-  // Event Listeners
   setupEventListeners() {
-    // Save current tabs button
     document.getElementById('saveCurrentTabs').addEventListener('click', () => {
       this.showSessionNameModal();
     });
 
-    // Modal event listeners
     document.getElementById('cancelSave').addEventListener('click', () => {
       this.hideSessionNameModal();
     });
@@ -50,28 +44,22 @@ class QuickLaunchSessions {
       this.saveCurrentSession();
     });
 
-    // Enter key in modal input
     document.getElementById('sessionNameInput').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         this.saveCurrentSession();
       }
     });
 
-    // Click outside modal to close
     document.getElementById('sessionNameModal').addEventListener('click', (e) => {
       if (e.target.id === 'sessionNameModal') {
         this.hideSessionNameModal();
       }
     });
   }
-
-  // Modal Management
   showSessionNameModal() {
     const modal = document.getElementById('sessionNameModal');
     const input = document.getElementById('sessionNameInput');
-    
-    // Set default name
-    const now = new Date();
+        const now = new Date();
     const defaultName = `Session - ${now.toLocaleDateString()} ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
     input.value = defaultName;
     
@@ -79,14 +67,11 @@ class QuickLaunchSessions {
     input.focus();
     input.select();
   }
-
   hideSessionNameModal() {
     const modal = document.getElementById('sessionNameModal');
     modal.classList.remove('visible');
     document.getElementById('sessionNameInput').value = '';
   }
-
-  // Session Management
   async saveCurrentSession() {
     const sessionName = document.getElementById('sessionNameInput').value.trim();
     
@@ -96,9 +81,7 @@ class QuickLaunchSessions {
     }
 
     try {
-      // Get all tabs in the current window
       const tabs = await chrome.tabs.query({ currentWindow: true });
-      
       const sessionTabs = tabs.map(tab => ({
         title: tab.title,
         url: tab.url,
@@ -112,7 +95,7 @@ class QuickLaunchSessions {
         tabs: sessionTabs
       };
 
-      this.sessions.unshift(newSession); // Add to beginning
+      this.sessions.unshift(newSession);
       await this.saveSessions();
       this.renderSessions();
       this.hideSessionNameModal();
@@ -151,19 +134,16 @@ class QuickLaunchSessions {
     if (session && session.tabs.length > tabIndex) {
       session.tabs.splice(tabIndex, 1);
       
-      // If no tabs left, delete the session
       if (session.tabs.length === 0) {
-        this.expandedSessions.delete(sessionId); // Remove from expanded set
+        this.expandedSessions.delete(sessionId);
         await this.deleteSession(sessionId);
       } else {
         await this.saveSessions();
         this.renderSessions();
       }
     }
-    // Don't close the popup when removing individual tabs
   }
 
-  // Launch Functions
   async launchSession(sessionId) {
     const session = this.sessions.find(s => s.id === sessionId);
     if (!session) return;
@@ -175,7 +155,7 @@ class QuickLaunchSessions {
           active: false
         });
       }
-      window.close(); // Close popup after launching
+      window.close(); 
     } catch (error) {
       console.error('Error launching session:', error);
       alert('Failed to launch session. Please try again.');
@@ -195,7 +175,7 @@ class QuickLaunchSessions {
           });
         }
       }
-      window.close(); // Close popup after launching
+      window.close(); 
     } catch (error) {
       console.error('Error launching selected tabs:', error);
       alert('Failed to launch selected tabs. Please try again.');
@@ -205,13 +185,11 @@ class QuickLaunchSessions {
   async openSingleTab(url) {
     try {
       await chrome.tabs.create({ url, active: true });
-      // Don't close popup when opening individual tabs
     } catch (error) {
       console.error('Error opening tab:', error);
     }
   }
 
-  // Drag and Drop
   setupDragAndDrop(sessionCard, sessionIndex) {
     const dragHandle = sessionCard.querySelector('.drag-handle');
     
